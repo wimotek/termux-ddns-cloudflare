@@ -134,7 +134,6 @@ while true; do
             -H "Authorization: Bearer \$YOUR_API_TOKEN" \\
             -H "Content-Type: application/json" \\
             --data '{"type":"\$YOUR_RECORD_TYPE","name":"\$YOUR_DOMAIN","content":"\$YOUR_IP","ttl":1,"proxied":false}'
-        echo "更新完成，请等待生效..."
    fi
 
    echo " "
