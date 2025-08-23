@@ -1,4 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
+#By  wimotek.com 转载请注明出处.
 
 # 检查openlist是否已安装
 if ! command -v openlist &> /dev/null
