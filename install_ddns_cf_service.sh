@@ -86,10 +86,10 @@ cat >$PREFIX/var/service/$SERVICE_NAME/run  <<EOF
 get_record_ipv6() {
     local record_name="\$1"
     # 使用 nslookup 获取 DNS 记录的 IPv6 地址
-    # local record_ipv6=\$(nslookup -query=AAAA "\$YOUR_DOMAIN" | grep "Address" | awk '{print \$2}' | tail -n 1)
+    # local record_ipv6=\$(nslookup -query=AAAA "\$record_name" | grep "Address" | awk '{print \$2}' | tail -n 1)
     # 使用 ping6 测试 DNS 记录的 IPv6 地址
-    # local record_ipv6=\$(ping6 -c 1 "\$YOUR_DOMAIN" | grep "bytes from" | awk '{print \$4}' | cut -d':' -f1-4)
-    local record_ipv6=\$(ping6 -c 1 "\$YOUR_DOMAIN" 2>/dev/null |sed -n '1s/.*(\([0-9a-fA-F:]\+\)).*/\1/p')
+    # local record_ipv6=\$(ping6 -c 1 "\$record_name" | grep "bytes from" | awk '{print \$4}' | cut -d':' -f1-4)
+    local record_ipv6=\$(ping6 -c 1 "\$record_name" 2>/dev/null |sed -n '1s/.*(\([0-9a-fA-F:]\+\)).*/\1/p')
     if [ -z "\$record_ipv6" ]; then
         echo "错误：无法获取 DNS 记录 \$record_name 的 IPv6 地址。"
         exit 1
@@ -118,7 +118,7 @@ while true; do
     echo "当前 IPv6 地址: \$CURRENT_IPV6"
 
    echo "正在获取 DNS 记录 \$DOMAIN_NAME 的 IPv6 地址..."
-   RECORD_IPV6=\$(get_record_ipv6 "\$DOMAIN_NAME")
+   RECORD_IPV6=\$(get_record_ipv6 "\$YOUR_DOMAIN")
    echo "DNS 记录的 IPv6 地址: \$RECORD_IPV6"
 
    # 比较当前 IPv6 地址和 DNS 记录的 IPv6 地址
