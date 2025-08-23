@@ -130,7 +130,7 @@ while true; do
    else
         echo "IPv6 地址不同，正在更新 DNS 记录..."
         # 在这里添加你的 DDNS 更新逻辑
-        curl -X POST "https://api.cloudflare.com/client/v4/zones/\$YOUR_ZONE_ID/dns_records/\$YOUR_RECORD_ID" \\
+        curl -X PUT "https://api.cloudflare.com/client/v4/zones/\$YOUR_ZONE_ID/dns_records/\$YOUR_RECORD_ID" \\
             -H "Authorization: Bearer \$YOUR_API_TOKEN" \\
             -H "Content-Type: application/json" \\
             --data '{"type":"\$YOUR_RECORD_TYPE","name":"\$YOUR_DOMAIN","content":"\$YOUR_IP","ttl":1,"proxied":false}'
