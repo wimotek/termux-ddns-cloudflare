@@ -80,7 +80,7 @@ cat >$PREFIX/var/service/$SERVICE_NAME/run  <<EOF
 
 #配置参数
 YOUR_API_TOKEN="$CLOUDFLARE_API_TOKEN"
-YOUR_ZONE_ID=“$ZONE_ID”
+YOUR_ZONE_ID="$ZONE_ID"
 YOUR_RECORD_ID="$RECORD_ID"
 YOUR_DOMAIN="$DOMAIN_NAME"
 YOUR_RECORD_TYPE="$RECORD_TYPE"
@@ -133,7 +133,7 @@ while true; do
         curl -X PUT "https://api.cloudflare.com/client/v4/zones/\$YOUR_ZONE_ID/dns_records/\$YOUR_RECORD_ID" \\
             -H "Authorization: Bearer \$YOUR_API_TOKEN" \\
             -H "Content-Type: application/json" \\
-            --data '{"type":"\$YOUR_RECORD_TYPE","name":"\$YOUR_DOMAIN","content":"\$YOUR_IP","ttl":1,"proxied":false}'
+            --data '{"type":"'\$YOUR_RECORD_TYPE'","name":"'\$YOUR_DOMAIN'","content":"'\$YOUR_IP'","ttl":1,"proxied":false}'
    fi
 
    echo " "
