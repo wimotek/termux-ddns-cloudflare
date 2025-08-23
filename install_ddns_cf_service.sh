@@ -1,4 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
+export TZ='Asia/Shanghai'
 # 配置变量
 CLOUDFLARE_API_TOKEN="dnDYixxxxxxxxxxxxxxxxxxxxxxVG_lyN"  # 替换为你的 Cloudflare API Token
 DOMAIN_NAME="a.b.com"                  # 替换为你的域名
@@ -134,6 +135,7 @@ while true; do
         echo "更新完成，请等待生效..."
    fi
 
+   echo " "
    sleep 300  # 每 5 分钟运行一次
 done
 
