@@ -86,10 +86,10 @@ cat >$PREFIX/var/service/$SERVICE_NAME/run  <<EOF
 get_record_ipv6() {
     local record_name="\$1"
     # 使用 nslookup 获取 DNS 记录的 IPv6 地址
-    # local record_ipv6=\$(nslookup -query=AAAA "\$record_name" | grep "Address" | awk '{print \$2}' | tail -n 1)
+    # local record_ipv6=\$(nslookup -query=AAAA "\$YOUR_DOMAIN" | grep "Address" | awk '{print \$2}' | tail -n 1)
     # 使用 ping6 测试 DNS 记录的 IPv6 地址
-    # local record_ipv6=\$(ping6 -c 1 "\$record_name" | grep "bytes from" | awk '{print \$4}' | cut -d':' -f1-4)
-    local record_ipv6=\$(ping6 -c 1 "\$record_name" 2>/dev/null | head -n 1 | awk '{print \$3}' | sed 's/[()]//g')
+    # local record_ipv6=\$(ping6 -c 1 "\$YOUR_DOMAIN" | grep "bytes from" | awk '{print \$4}' | cut -d':' -f1-4)
+    local record_ipv6=\$(ping6 -c 1 "\$YOUR_DOMAIN" 2>/dev/null |sed -n '1s/.*(\([0-9a-fA-F:]\+\)).*/\1/p')
     if [ -z "\$record_ipv6" ]; then
         echo "错误：无法获取 DNS 记录 \$record_name 的 IPv6 地址。"
         exit 1
@@ -127,9 +127,9 @@ while true; do
    else
         echo "IPv6 地址不同，正在更新 DNS 记录..."
         # 在这里添加你的 DDNS 更新逻辑
-        curl -X POST "https://api.cloudflare.com/client/v4/zones/\$YOUR_ZONE_ID/dns_records/\$YOUR_RECORD_ID" \
-            -H "Authorization: Bearer \$YOUR_API_TOKEN" \
-            -H "Content-Type: application/json" \
+        curl -X POST "https://api.cloudflare.com/client/v4/zones/\$YOUR_ZONE_ID/dns_records/\$YOUR_RECORD_ID" \\
+            -H "Authorization: Bearer \$YOUR_API_TOKEN" \\
+            -H "Content-Type: application/json" \\
             --data '{"type":"\$YOUR_RECORD_TYPE","name":"\$YOUR_DOMAIN","content":"\$YOUR_IP","ttl":1,"proxied":false}'
         echo "更新完成，请等待生效..."
    fi
