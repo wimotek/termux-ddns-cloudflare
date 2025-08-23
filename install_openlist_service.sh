@@ -1,6 +1,16 @@
 #!/data/data/com.termux/files/usr/bin/bash
 #By  wimotek.com 转载请注明出处.
 
+# 检查 termux-service 是否安装
+if ! pkg list-installed | grep -q "termux-services"; then
+    echo "termux-services 未安装，正在安装..."
+    pkg install termux-services -y
+    if [ $? -ne 0 ]; then
+        echo "安装 termux-services 失败，请检查网络连接并重试。"
+        exit 1
+    fi
+    echo "termux-services 安装成功。"
+fi
 # 检查openlist是否已安装
 if ! command -v openlist &> /dev/null
 then
