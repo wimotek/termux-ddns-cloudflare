@@ -1,4 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
+#By  wimotek.com 转载请注明出处.
+
 export TZ='Asia/Shanghai'
 # 配置变量
 CLOUDFLARE_API_TOKEN="dnDYixxxxxxxxxxxxxxxxxxxxxxVG_lyN"  # 替换为你的 Cloudflare API Token
