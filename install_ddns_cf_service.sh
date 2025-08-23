@@ -145,6 +145,8 @@ EOF
 # 赋予脚本执行权限
 chmod +x $PREFIX/var/service/$SERVICE_NAME/run
 
+#重新加载Termux的环境
+source $PREFIX/etc/profile
 # 启用并启动服务
 sv-enable $SERVICE_NAME
 sv up $SERVICE_NAME
