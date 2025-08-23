@@ -133,7 +133,7 @@ while true; do
         curl -X PUT "https://api.cloudflare.com/client/v4/zones/\$YOUR_ZONE_ID/dns_records/\$YOUR_RECORD_ID" \\
             -H "Authorization: Bearer \$YOUR_API_TOKEN" \\
             -H "Content-Type: application/json" \\
-            --data '{"type":"'\$YOUR_RECORD_TYPE'","name":"'\$YOUR_DOMAIN'","content":"'\$YOUR_IP'","ttl":1,"proxied":false}'
+            --data '{"type":"'\$YOUR_RECORD_TYPE'","name":"'\$YOUR_DOMAIN'","content":"'\$YOUR_IP'","ttl":60,"proxied":false}'
    fi
 
    echo " "
