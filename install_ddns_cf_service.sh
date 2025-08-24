@@ -4,7 +4,8 @@
 export TZ='Asia/Shanghai'
 # 配置变量
 CLOUDFLARE_API_TOKEN="dnDYixxxxxxxxxxxxxxxxxxxxxxVG_lyN"  # 替换为你的 Cloudflare API Token
-DOMAIN_NAME="a.b.com"                  # 替换为你的域名
+DOMAIN_NAME="a.b.com"                  # 替换为你的域名,用于更新ipv6
+LAN_DOMAIN_NAME="lan.b.com"            # 替换为你的域名.用于更新本地ipv4
 RECORD_TYPE="AAAA"                         # 替换为你要查找的记录类型（A、CNAME 等）
 
 # 检查 termux-service 是否安装
@@ -69,6 +70,10 @@ echo "正在获取 DNS 记录 $DOMAIN_NAME 的 Record ID..."
 RECORD_ID=$(get_record_id "$ZONE_ID" "$RECORD_TYPE" "$DOMAIN_NAME")
 echo "Record ID: $RECORD_ID"
 
+echo "正在获取 DNS 记录 $LAN_DOMAIN_NAME 的 Record ID..."
+LAN_RECORD_ID=$(get_record_id "$ZONE_ID" "$RECORD_TYPE" "$LAN_DOMAIN_NAME")
+echo "Record ID: $LAN_RECORD_ID"
+
 
 # 创建 ddns-cf 服务脚本
 SERVICE_NAME="ddns-cf"
@@ -84,6 +89,11 @@ YOUR_ZONE_ID="$ZONE_ID"
 YOUR_RECORD_ID="$RECORD_ID"
 YOUR_DOMAIN="$DOMAIN_NAME"
 YOUR_RECORD_TYPE="$RECORD_TYPE"
+
+LAN_RECORD_ID="$LAN_RECORD_ID"
+LAN_DOMAIN="$LAN_DOMAIN_NAME"
+
+
 
 # 获取 DNS 记录的 IPv6 地址
 get_record_ipv6() {
@@ -109,6 +119,28 @@ get_current_ipv6() {
         exit 1
     fi
     echo "\$ipv6"
+}
+
+# 获取DNS 记录的本地 ipv4 地址
+get_lan_record_ipv4() {
+    local record_name="\$1"
+    local lan_record_ipv4=\$(ping -c 1 \$record_name| sed -nE 's/.*\(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\).*/\1/p')
+    if [ -z "\$lan_record_ipv4" ]; then
+        echo "错误：无法获取 DNS 记录 \$record_name 的 ipv4 地址。"
+        exit 1
+    fi
+    echo "\$lan_record_ipv4"
+}
+
+#获取本地ipv4地址
+get_lan_current_ipv4() {
+    # 使用 ifconfig获取本地 ipv4 地址
+    local ipv4=\$(ifconfig 2>&1 | grep -A 1 "wlan" | grep "inet" | awk '{print \$2}')
+    if [ -z "\$ipv4" ]; then
+        echo "错误：无法获取当前设备本地 ipv4 地址。"
+        exit 1
+    fi
+    echo "\$ipv4"
 }
 
 
@@ -137,6 +169,30 @@ while true; do
    fi
 
    echo " "
+
+   echo "正在获取当前设备本地 IPv4 地址..."
+   LAN_CURRENT_IPV4=\$(get_lan_current_ipv4)
+   echo "当前本地 IPv4 地址: \$LAN_CURRENT_IPV4"
+
+   echo "正在获取 DNS 记录 \$DOMAIN_NAME 的 IPv4 地址..."
+   LAN_RECORD_IPV4=\$(get_lan_record_ipv4 "\$LAN_DOMAIN")
+   echo "\$LAN_DOMAIN DNS 记录的 IPv4 地址: \$LAN_RECORD_IPV4"
+
+   # 比较当前 IPv4 地址和 DNS 记录的 IPv4 地址
+   if [ "\$LAN_CURRENT_IPV4" == "\$LAN_RECORD_IPV4" ]; then
+        echo "本地IPv4 地址相同，无需更新。"
+   else
+        echo "本地IPv4 地址不同，正在更新 DNS 记录..."
+        # 在这里添加你的 DDNS 更新逻辑
+        curl -X PUT "https://api.cloudflare.com/client/v4/zones/\$YOUR_ZONE_ID/dns_records/\$LAN_RECORD_ID" \
+           -H "Authorization: Bearer \$YOUR_API_TOKEN" \
+           -H "Content-Type: application/json" \
+           --data '{"type":"A","name":"'\$LAN_DOMAIN'","content":"'\$LAN_CURRENT_IPV4'","ttl":60,"proxied":false}'
+   fi
+   echo " "
+
+
+   
    sleep 300  # 每 5 分钟运行一次
 done
 
